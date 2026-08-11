@@ -1,0 +1,22 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+node_modules/
+.next/
+*.db
+*.sqlite
+*.sqlite3
+.env
+**/.env
+.env.local
+**/.env.local
+/data/
+.pytest_cache/
+
+# Local tools/files
+ngrok.exe
+ngrok.zip
+
+# Generated exports
+backend/exports/
