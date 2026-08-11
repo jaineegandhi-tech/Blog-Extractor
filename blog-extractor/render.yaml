@@ -3,50 +3,20 @@ services:
     name: blog-extractor-api
     env: python
     rootDir: backend
-    buildCommand: pip install -r requirements.txt && playwright install chromium --with-deps
-    startCommand: gunicorn app.main:app --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT
-    envVars:
-      - key: DATABASE_URL
-        sync: false
-      - key: REDIS_URL
-        sync: false
-      - key: CELERY_BROKER_URL
-        fromService:
-          type: web
-          name: blog-extractor-api
-          envVarKey: REDIS_URL
-      - key: CELERY_RESULT_BACKEND
-        fromService:
-          type: web
-          name: blog-extractor-api
-          envVarKey: REDIS_URL
-      - key: PORT
-        value: 8000
 
-  - type: worker
-    name: blog-extractor-celery
-    env: python
-    rootDir: backend
     buildCommand: pip install -r requirements.txt && playwright install chromium --with-deps
-    startCommand: celery -A app.workers.celery_app worker --pool=solo --loglevel=info
+
+    startCommand: celery -A app.workers.celery_app worker --pool=solo --loglevel=info & exec gunicorn app.main:app --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT
+
     envVars:
       - key: DATABASE_URL
-        fromService:
-          type: web
-          name: blog-extractor-api
-          envVarKey: DATABASE_URL
+        sync: false
+
       - key: REDIS_URL
-        fromService:
-          type: web
-          name: blog-extractor-api
-          envVarKey: REDIS_URL
+        sync: false
+
       - key: CELERY_BROKER_URL
-        fromService:
-          type: web
-          name: blog-extractor-api
-          envVarKey: REDIS_URL
+        sync: false
+
       - key: CELERY_RESULT_BACKEND
-        fromService:
-          type: web
-          name: blog-extractor-api
-          envVarKey: REDIS_URL
+        sync: false
